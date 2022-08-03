@@ -8,7 +8,7 @@ include "digest.circom";
 
 // CommitmentHasher returns:
 //  - cm = Pedersen(pk || p || t || r1)
-//  - sn_hat = Pedersen(sk || p)
+//  - sn_hat = Digest(sk || p)
 template CommitmentHasher() {
     signal input pk;
     signal input sk;

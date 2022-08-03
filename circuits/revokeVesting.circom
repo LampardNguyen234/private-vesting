@@ -6,7 +6,7 @@ include "circomlib/circuits/comparators.circom";
 include "merkleTree.circom";
 include "digest.circom";
 
-// computes h_revoke_hat = MiMCSponge(p || t), commitmentHasher = Pedersen(p || t || r2)
+// computes h_revoke_hat = Digest(p || t), commitment = Pedersen(p || t || r2)
 template CommitmentHasher() {
     signal input p;
     signal input r2;
