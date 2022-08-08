@@ -20,38 +20,27 @@ template CommitmentHasher() {
     signal output h_revoke_hat;
 
     // double check (sk,pk) correspondence.
-    component keyHasher = Digest(1);
-    keyHasher.ins[0] <== sk;
-    keyHasher.hash === pk;
+    component keyHasher = Pedersen1();
+    keyHasher.in <== sk;
+    keyHasher.out === pk;
 
-    component revokeHasher = Digest(2);
+    component revokeHasher = Pedersen2();
     revokeHasher.ins[0] <== p;
     revokeHasher.ins[1] <== t;
 
-    component cmHasher = Pedersen(992);
-    component snHasher = Pedersen(496);
-    component pBits = Num2Bits(248);
-    component r1Bits = Num2Bits(248);
-    component pkBits = Num2Bits(248);
-    component skBits = Num2Bits(248);
-    component tBits = Num2Bits(248);
-    pBits.in <== p;
-    r1Bits.in <== r1;
-    pkBits.in <== pk;
-    skBits.in <== sk;
-    tBits.in <== t;
-    for (var i = 0; i < 248; i++) {
-        snHasher.in[i] <== skBits.out[i];
-        snHasher.in[i+248] <== pBits.out[i];
-        cmHasher.in[i] <== pkBits.out[i];
-        cmHasher.in[i+248] <== pBits.out[i];
-        cmHasher.in[i + 496] <== tBits.out[i];
-        cmHasher.in[i + 744] <== r1Bits.out[i];
-    }
+    component cmHasher = Pedersen4();
+    cmHasher.ins[0] <== pk;
+    cmHasher.ins[1] <== p;
+    cmHasher.ins[2] <== t;
+    cmHasher.ins[3] <== r1;
 
-    cm <== cmHasher.out[0];
-    sn_hat <== snHasher.out[0];
-    h_revoke_hat <== keyHasher.hash;
+    component snHasher = Pedersen2();
+    snHasher.ins[0] <== sk;
+    snHasher.ins[1] <== p;
+
+    cm <== cmHasher.out;
+    sn_hat <== snHasher.out;
+    h_revoke_hat <== keyHasher.out;
 }
 
 // Verifies that commitment that corresponds to given secret and sn is included in the merkle tree of deposits

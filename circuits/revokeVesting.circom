@@ -14,25 +14,17 @@ template CommitmentHasher() {
     signal output commitment;
     signal output h_revoke_hat;
 
-    component nullifierHasher = Digest(2);
+    component nullifierHasher = Pedersen2();
     nullifierHasher.ins[0] <== p;
     nullifierHasher.ins[1] <== t;
 
-    component commitmentHasher = Pedersen(744);
-    component pBits = Num2Bits(248);
-    component r2Bits = Num2Bits(248);
-    component tBits = Num2Bits(248);
-    pBits.in <== p;
-    r2Bits.in <== r2;
-    tBits.in <== t;
-    for (var i = 0; i < 248; i++) {
-        commitmentHasher.in[i] <== pBits.out[i];
-        commitmentHasher.in[i+248] <== tBits.out[i];
-        commitmentHasher.in[i + 496] <== r2Bits.out[i];
-    }
+    component commitmentHasher = Pedersen3();
+    commitmentHasher.ins[0] <== p;
+    commitmentHasher.ins[1] <== t;
+    commitmentHasher.ins[2] <== r2;
 
-    commitment <== commitmentHasher.out[0];
-    h_revoke_hat <== nullifierHasher.hash;
+    commitment <== commitmentHasher.out;
+    h_revoke_hat <== nullifierHasher.out;
 }
 
 // Verifies that commitment that corresponds to given secret and nullifier is included in the merkle tree of deposits
